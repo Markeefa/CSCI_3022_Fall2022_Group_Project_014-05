@@ -1,13 +1,15 @@
-# CSCI_3308_Fall2022_Group_Project_014-PeoplePeople Inc. LLC CO Limited ®™
+# CSCI_3308_Fall2022_Group_Project_014-NotPeoplePeople Inc. LLC CO Limited ®™
 
 # RottenBuffs
 
 ### Vision Statement
-To create an open platform where Boulder students and Faculty can publicly share diverse ideas and opinions of each other, and what others think about them as a social experiment
+To create an open platform where Boulder students can share their very valuable opinions on everything in the universe except each other.
 
 ### Application Description
-RottenBuffs is an application specifically designed to rate people. Rate your friends, famous people, teachers, and even complete strangers. Login with your buff email to completely trash or love others. The RottenBuffs app will provide functionality to leave ratings for other users as well as view the ratings on your account and any past ratings that you have left. Users will also be able to report any reviews that they believe to be inappropriate for the platform. A review includes a good or bad rating, as well as a description of the reasoning behind the review. Rating is displayed in the person’s profile page as a percentage of good reviews compared to total reviews, together with their profile picture and self made description. 
-The website will include functionality to search for specific users to leave reviews for as well as a trending page which will display users who are currently popular on the platform. There will be a my reviews page where the user’s own past reviews will be shown.
+RottenBuffs is an application specifically designed to rate anything, but people. Rate pets, famous things(not people), concepts(eg the impending doom of us all), and even food. Login with your buff email to completely trash or love things. The RottenBuffs app will provide functionality to leave ratings and reviews for things. Users will also be able to report any reviews or posts that they believe to be inappropriate for the platform(ex: people). A review is one good or bad rating, as well as an optional description/comment.
+The website will include functionality to search for specific categories or things to leave reviews for as well as a trending page which will display things that are currently popular on the platform. There will be a my reviews page where the user’s own past reviews will be shown.
+
+
 
 ### Team Name
 PeoplePeople Inc. LLC CO Limited ®™.corp for profit nonprofit
