@@ -27,3 +27,6 @@ PeoplePeople Inc. LLC CO Limited ®™.corp for profit nonprofit
 
 ### Communication Plan
 - We are using a discord server to communicate together, with weekly meetings
+
+### Google Doc
+https://docs.google.com/document/d/1tD1vi5-rP6X2Q3zxvL4Id2VhZZBTCo3WbWZJXH1wh-Y/edit
