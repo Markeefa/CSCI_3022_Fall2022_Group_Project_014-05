@@ -1,0 +1,49 @@
+<!-- <%- include ('../partials/header') %> -->
+<!-- <%- include ('../partials/menu') %> -->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta name="description" content="" />
+    <title>People People</title>
+    <!-- TO-DO: Add the <link> tag to include bootstrap stylesheet -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+    <script   src="https://code.jquery.com/jquery-3.6.0.js"   integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk="   crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+  </head>
+  <body>
+<main>
+  <div class="container">
+    <!-- THE REST OF YOUR HTML CODE GOES HERE -->
+    <h1>Login</h1>
+    <form action="/login" method="post">
+      <div class="form-group row">
+        <label for="username" class="col-sm-2 col-form-label">Username</label>
+        <div class="col-sm-10">
+          <input type="text"  class="form-control" id="username" placeholder="CU Email" name="username">
+        </div>
+      </div>
+      <div class="form-group row">
+        <label for="inputPassword" class="col-sm-2 col-form-label">Password</label>
+        <div class="col-sm-10">
+          <input type="password" class="form-control" id="inputPassword" placeholder="Password" name="password">
+        </div>
+      </div>
+      <hr>
+      <div class="text-center">
+        <div class="col-md-10">
+        <p>Don't have an account. <a href="/register">Register</a></p>
+      </div>
+      <div class="col-md-10">
+        <button type="submit" class="form-element form-button form-button form-button-submitA"
+        data-nlok-ref-guid="fb81c9d6-5e2c-4c42-f2b8-cb3e1e24b3c2">login</button>
+      </div>
+      </div>
+      </form>
+  </div>
+</main>
+  </body>
+<!-- <%- include ('../partials/footer') %> -->
