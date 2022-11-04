@@ -14,7 +14,8 @@ CREATE TABLE things(
     day INTEGER NOT NULL,
     image_url VARCHAR(200) NOT NULL
     upvotes INTEGER,
-    downvotes INTEGER
+    downvotes INTEGER,
+    category VARCHAR(50) NOT NULL
 );
 CREATE TABLE reviews(
     review_id SERIAL PRIMARY KEY,
@@ -23,7 +24,5 @@ CREATE TABLE reviews(
     year INTEGER NOT NULL,
     month INTEGER NOT NULL,
     day INTEGER NOT NULL,
-    review VARCHAR(500) NOT NULL,
-    upvotes INTEGER,
-    downvotes INTEGER
+    review VARCHAR(500) NOT NULL
 );
