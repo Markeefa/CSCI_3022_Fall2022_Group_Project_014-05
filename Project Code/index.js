@@ -78,6 +78,31 @@ app.post('/register', async (req, res) => {
     });
 });
 
+app.post('/posting', (req, res) => {
+    req.session.user;
+    const query = 'insert into things (user_posted_id, title, description, year, month, day, image_url, upvotes, downvotes, category)values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)';
+    db.any(query, [
+        0,
+        //req.session.user.user_id,
+        req.body.title,
+        req.body.description,
+        0,
+        0,
+        0,
+        req.body.image_url,
+        0,
+        0,
+        req.body.category,
+    ])
+    .then(function (data) {
+        res.redirect('register');
+    })
+    .catch(function (err) {
+        console.log(err);
+        res.redirect('posting');
+    });
+});
+
 //commented out for testing purposes 
 
 // const auth = (req, res, next) => {
