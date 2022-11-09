@@ -26,5 +26,5 @@ CREATE TABLE reviews(
     year INTEGER NOT NULL,
     month INTEGER NOT NULL,
     day INTEGER NOT NULL,
-    review VARCHAR(500) NOT NULL,
+    review VARCHAR(500) NOT NULL
 );
