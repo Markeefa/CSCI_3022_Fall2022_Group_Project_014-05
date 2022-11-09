@@ -5,7 +5,6 @@ const bodyParser = require('body-parser');
 const session = require('express-session');
 const bcrypt = require('bcrypt');
 const axios = require('axios');
-const pgPromise = require('pg-promise');
 
 const dbConfig = {
     host: 'db',
@@ -16,35 +15,84 @@ const dbConfig = {
 };
 
 const db = pgp(dbConfig);
-
+  
+// test your database
 db.connect()
     .then(obj => {
-        console.log('Database connection successful');
-        obj.done();
+      console.log('Database connection successful'); // you can view this message in the docker compose logs
+      obj.done(); // success, release the connection;
     })
     .catch(error => {
-        console.log('ERROR:', error.message || error)
-    });
+      console.log('ERROR:', error.message || error);
+});
 
+// Set the view engine to EJS
 app.set('view engine', 'ejs');
+    
+//Specify the usage of JSON fro parsing request body
 app.use(bodyParser.json());
 
+//Initialize session variables
 app.use(
     session({
         secret: process.env.SESSION_SECRET,
         saveUninitialized: false,
         resave: false,
-    })
-);
-
+        })
+    );
+      
 app.use(
     bodyParser.urlencoded({
         extended: true,
     })
 );
 
-app.get('/', (req,res) => {
-    res.redirect('/login');
+//Redirect to the login page
+app.get('/', (req, res) =>{
+    res.redirect('/login'); //this will call the /anotherRoute route in the API
+  });
+
+//login page
+app.get('/login', (req, res) => {
+    //the logic goes here
+    res.render("pages/login")
+  });
+
+// POST /login
+app.post('/login', async (req, res) => {
+    //the logic goes here
+  //  const decrypt_passwd = await bcrypt.hash(req.body.password, 10);
+
+    //const query = "SELECT * from users where users.email = $1 and users.password = $2", 
+
+    db.one("SELECT * from users where users.username = $1;",[req.body.username])
+        .then(async user => {
+        const match = await bcrypt.compare(req.body.password, user.password);
+        
+        if (!match){
+            throw Error("Incorrect username or password");
+        }
+        else{
+            req.session.user = {
+                api_key: process.env.API_KEY,
+              };
+              req.session.save();
+              res.redirect("/discover");
+        }
+
+        })
+
+        .catch(function (err) {
+            res.send(err.message)
+            res.redirect("/register")
+          });
+
+});
+
+// Logout
+app.get("/logout", (req, res) => {
+    req.session.destroy();
+    res.render("pages/login");
 });
 
 app.get('/register', (req, res) => {
