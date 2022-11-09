@@ -7,7 +7,7 @@ CREATE TABLE users(
 CREATE TABLE things(
     thing_id SERIAL PRIMARY KEY,
     user_posted_id VARCHAR(50) NOT NULL,
-    Title VARCHAR(50) PRIMARY KEY,
+    title VARCHAR(50) PRIMARY KEY,
     description VARCHAR(200),
     year INTEGER NOT NULL,
     month INTEGER NOT NULL,
