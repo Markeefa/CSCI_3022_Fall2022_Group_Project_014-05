@@ -51,6 +51,10 @@ app.get('/register', (req, res) => {
     res.render('pages/register');
 });
 
+app.get('/posting', (req, res) => {
+    res.render('pages/posting');
+});
+
 app.post('/register', async (req, res) => {
     if(req.body.password!=req.body.password_confirm){
         console.log("Passwords do not match!");
@@ -74,19 +78,20 @@ app.post('/register', async (req, res) => {
     });
 });
 
-const auth = (req, res, next) => {
-    if (!req.session.user) {
-        req.session.message = "Please Register";
-        return res.redirect('/register');
-    }
-    next();
-};
+//commented out for testing purposes 
+// const auth = (req, res, next) => {
+//     if (!req.session.user) {
+//         req.session.message = "Please Register";
+//         return res.redirect('/register');
+//     }
+//     next();
+// };
+
+// app.use(auth);
 
 app.get('/profile', (req, res) => {
     res.render('pages/profile');
 });
-
-app.use(auth);
 
 app.listen(3000);
 console.log('Server is listening on port 3000');
