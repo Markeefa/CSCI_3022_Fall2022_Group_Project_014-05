@@ -82,6 +82,10 @@ const auth = (req, res, next) => {
     next();
 };
 
+app.get('/profile', (req, res) => {
+    res.render('pages/profile');
+});
+
 app.use(auth);
 
 app.listen(3000);
