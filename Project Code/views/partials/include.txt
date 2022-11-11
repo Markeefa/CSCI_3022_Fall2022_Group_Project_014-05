@@ -1,0 +1,13 @@
+use the following to include partials to your ejs page:
+
+<%- include ('../partials/header') %>
+<%- include ('../partials/menu') %>
+
+<main>
+    <div class="container">
+    <!-- YOUR HTML CODE GOES HERE -->
+
+    </div>
+</main>
+
+<%- include ('../partials/footer') %>

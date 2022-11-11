@@ -1,0 +1,61 @@
+<main>
+  <div class="container">
+    <form action="/register" method="POST">
+      <table class="center">
+        <tr>
+          <th>Enter your information to create a new account</th>
+        </tr>
+        <tr>
+          <td>
+            <input type="text" name="first_name" id="first_name" placeholder="First Name" required>
+          </td>
+          <td>
+            <input type="text" name="last_name" id="last_name" placeholder="Last Name" required>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <input type="text" name="username" id="username" placeholder="username" required>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <input type="email" name="email" id="email" placeholder="CU Email Address" required>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <input type="text" name="password" id="password" placeholder="Password" required>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <input type="text" id="password_confirm" placeholder="Confirm Password" required>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <input type="checkbox" id="terms_and_conditions" required>
+          </td>
+          <td>
+            <label>I have read and agree to the </label>
+            <a href="https:://example.com">Terms and Conditions</a>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <button class="btn btn-primary" type="submit">Sign Up</button>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            Already registered?
+          </td>
+          <td>
+            <a href="/login">Log In</a>
+          </td>
+        </tr>
+      </table>
+    </form>
+  </div>
+</main>
