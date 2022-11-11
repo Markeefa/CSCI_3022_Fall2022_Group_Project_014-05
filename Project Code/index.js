@@ -82,22 +82,23 @@ app.post('/login', async (req, res) => {
             throw Error("Incorrect username or password");
         }
         else{
-            userConst.user_id = data.user_id;
-            userConst.username = username;
-            userConst.first_name = data.first_name;
-            userConst.last_name = data.last_name;
-            userConst.email = data.email;
+            userConst.user_id = user.user_id;
+            userConst.username = user.username;
+            userConst.first_name = user.first_name;
+            userConst.last_name = user.last_name;
+            userConst.email = user.email;
 
             req.session.user = userConst;
             req.session.save();
-            res.redirect("/home");
+            res.redirect("/profile");
         }
 
         })
 
         .catch(function (err) {
-            res.send(err.message)
-            res.redirect("/register")
+            //res.send(err.message)
+            console.log(err.message);
+            res.redirect("/login");
           });
 
 });
@@ -131,6 +132,7 @@ app.post('/register', async (req, res) => {
         hash
     ])
     .then(function (data) {
+        console.log("successfully registered");
         res.redirect('/');
     })
     .catch(function (err) {
