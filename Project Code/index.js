@@ -120,7 +120,7 @@ app.post('/register', async (req, res) => {
     if(req.body.password!=req.body.password_confirm){
         console.log("Passwords do not match!");
         res.redirect('register');
-    }
+    }else{
     const hash = await bcrypt.hash(req.body.password, 10);
     const query = 'insert into users (first_name, last_name, email, username, password) values ($1, $2, $3, $4, $5);';
     db.any(query, [
@@ -137,7 +137,7 @@ app.post('/register', async (req, res) => {
         console.log(err);
         res.redirect('/register');
     });
-});
+}});
 
 app.post('/posting', (req, res) => {
     req.session.user;
