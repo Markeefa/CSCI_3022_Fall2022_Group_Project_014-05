@@ -1,0 +1,50 @@
+<main>
+    <div class="container">
+      <form action="/posting" method="POST">
+        <table class="center">
+          <tr>
+            <th>Time to post a thing. Fill out the data below</th>
+          </tr>
+          <tr>
+            <td>
+              <input type="text" name="title" id="title" placeholder="Title" required>
+            </td>
+          </tr>
+          <!-- will replace image_url eventually with this 
+            <div class="form-group">
+            <label for="exampleFormControlFile1">Example file input</label>
+            <input type="file" class="form-control-file" id="exampleFormControlFile1">
+          </div> -->
+          <tr>
+            <td>
+              <input type="text" name="image_url" id="image_url" placeholder="image_url" required>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select class="custom-select mr-sm-2" id="category" name="category" >
+                <option selected>categories...</option>
+                <option value="objects">objects</option>
+                <option value="meme">meme</option>
+                <option value="location">location</option>
+                <option value="animal">animal</option>
+                <option value="ideas">ideas</option>
+                <option value="etc">etc</option>
+              </select>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <textarea class="form-control" name="description" id="description" placeholder="description" rows="3" required></textarea>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <button class="btn btn-primary" type="submit">Post</button>
+            </td>
+          </tr>
+        </table>
+      </form>
+    </div>
+  </main>
+  
