@@ -1,0 +1,42 @@
+<%- include ('../partials/header') %>
+<%- include ('../partials/menu') %>
+
+<div class="container">
+    <h1>Newest Posts</h1>
+    <table>
+        <tr>
+    <% for(var i = 0; i < 10; i++) { %>
+        <% if(i==5){ %>
+            <tr>
+        <% } %>
+        <td>
+        <div class="card">
+            <img src="https://mario.wiki.gallery/images/thumb/1/13/Funky_Kong_Artwork_-_Donkey_Kong_Country_Tropical_Freeze.png/1200px-Funky_Kong_Artwork_-_Donkey_Kong_Country_Tropical_Freeze.png" alt="funky" style="width:100%">
+            <div class="container">
+                <table>
+                <tr>
+                <h4><b><%= data[i].title %></b></h4>
+                </tr>
+                <tr>
+                    <td>
+                        <h4><%= 100*(data[i].upvotes/(data[i].upvotes+data[i].downvotes)) %>% Upvoted</h4>
+                    </td>
+                    <td>
+                <form action="https://example.com">
+                    <button type="submit">View Post</button>
+                </form>
+                    </td>
+                </tr>
+                </table>
+            </div>
+        </div>
+        </td>
+        <% if(i==10){ %>
+            </tr>
+        <% } %>
+    <% } %>
+        </tr>
+    </table>
+</div>
+
+<%- include ('../partials/footer') %>

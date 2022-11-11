@@ -186,5 +186,12 @@ app.get('/profile', (req, res) => {
       });
 });
 
+app.get('/home', (req, res) => {
+    const query = 'select * from things order by thing_id desc limit 10';
+    db.any(query).then(data => {
+        res.render('pages/home', {data:data});
+    });
+});
+
 app.listen(3000);
 console.log('Server is listening on port 3000');
