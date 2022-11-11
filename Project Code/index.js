@@ -15,6 +15,15 @@ const dbConfig = {
 };
 
 const db = pgp(dbConfig);
+
+// User setup
+const userConst = {
+    user_id: undefined,
+    username: undefined,
+    first_name: undefined,
+    last_name: undefined,
+    email: undefined,
+};
   
 // test your database
 db.connect()
@@ -49,7 +58,7 @@ app.use(
 
 //Redirect to the login page
 app.get('/', (req, res) =>{
-    res.redirect('/login'); //this will call the /anotherRoute route in the API
+    res.redirect('/login'); 
   });
 
 //login page
@@ -73,11 +82,15 @@ app.post('/login', async (req, res) => {
             throw Error("Incorrect username or password");
         }
         else{
-            req.session.user = {
-                api_key: process.env.API_KEY,
-              };
-              req.session.save();
-              res.redirect("/discover");
+            userConst.user_id = data.user_id;
+            userConst.username = username;
+            userConst.first_name = data.first_name;
+            userConst.last_name = data.last_name;
+            userConst.email = data.email;
+
+            req.session.user = userConst;
+            req.session.save();
+            res.redirect("/home");
         }
 
         })
@@ -118,11 +131,11 @@ app.post('/register', async (req, res) => {
         hash
     ])
     .then(function (data) {
-        res.redirect('login');
+        res.redirect('/');
     })
     .catch(function (err) {
         console.log(err);
-        res.redirect('register');
+        res.redirect('/register');
     });
 });
 
@@ -163,7 +176,12 @@ app.post('/posting', (req, res) => {
 // app.use(auth);
 
 app.get('/profile', (req, res) => {
-    res.render('pages/profile');
+    res.render('pages/profile', {
+        username: req.session.user.username,
+        first_name: req.session.user.first_name,
+        last_name: req.session.user.last_name,
+        email: req.session.user.email
+      });
 });
 
 app.listen(3000);
