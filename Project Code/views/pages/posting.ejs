@@ -1,50 +1,50 @@
-<main>
-    <div class="container">
-      <form action="/posting" method="POST">
-        <table class="center">
-          <tr>
-            <th>Time to post a thing. Fill out the data below</th>
-          </tr>
-          <tr>
-            <td>
-              <input type="text" name="title" id="title" placeholder="Title" required>
-            </td>
-          </tr>
-          <!-- will replace image_url eventually with this 
-            <div class="form-group">
-            <label for="exampleFormControlFile1">Example file input</label>
-            <input type="file" class="form-control-file" id="exampleFormControlFile1">
-          </div> -->
-          <tr>
-            <td>
-              <input type="text" name="image_url" id="image_url" placeholder="image_url" required>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <select class="custom-select mr-sm-2" id="category" name="category" >
-                <option selected>categories...</option>
-                <option value="objects">objects</option>
-                <option value="meme">meme</option>
-                <option value="location">location</option>
-                <option value="animal">animal</option>
-                <option value="ideas">ideas</option>
-                <option value="etc">etc</option>
-              </select>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <textarea class="form-control" name="description" id="description" placeholder="description" rows="3" required></textarea>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <button class="btn btn-primary" type="submit">Post</button>
-            </td>
-          </tr>
-        </table>
-      </form>
+<%- include ('../partials/header') %>
+<%- include ('../partials/menu') %>
+
+<div class="container">
+  <form action="/posting" method="POST">
+    <div class="form-group row">
+        <h1>Create New Post</h1>
     </div>
-  </main>
-  
+    <table class="table">
+      <tr>
+        <th>
+        <div class="form-group row">
+          <label for="title" class="col-sm-2 col-form-label">Title</label>
+          <div class="col-sm-10">
+            <input type="text" class="form-control" name="title" id="title" placeholder="Title" required>
+          </div>
+        </div>
+        </th>
+        <th>
+          <div class="form-group row">
+            <label for="category" class="col-sm-2 col-form-label">Categories</label>
+            <div class="col-sm-10">
+              <select class="custom-select mr-sm-2" id="category" name="category" >
+                <option selected>Choose Categorie</option>
+                <option value="objects">Object</option>
+                <option value="meme">Meme</option>
+                <option value="location">Location</option>
+                <option value="animal">Animal</option>
+                <option value="ideas">Ideas</option>
+                <option value="Food">Food</option>
+                <option value="something else">Something Else</option>
+              </select>
+            </div>
+          </div>
+        </th>
+      </tr>
+    </table>
+    <h5>Description</h5>
+    <div class="form-group row">
+      <div class="col-sm-11">
+        <textarea class="form-control" maxlength="300" name="description" id="description" placeholder="description" rows="3" required></textarea>
+      </div>
+    </div>
+     <div class="col-md-10">
+        <button class="btn btn-primary lg" type="submit">Post</button>
+        <a href="/register" class="btn btn-primary lg">Back</a>
+     </div>
+  </form>
+</div>
+  <%- include ('../partials/footer') %>
