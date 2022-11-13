@@ -15,6 +15,15 @@ const dbConfig = {
 };
 
 const db = pgp(dbConfig);
+
+// User setup
+const userConst = {
+    user_id: undefined,
+    username: undefined,
+    first_name: undefined,
+    last_name: undefined,
+    email: undefined,
+};
   
 // test your database
 db.connect()
@@ -49,7 +58,7 @@ app.use(
 
 //Redirect to the login page
 app.get('/', (req, res) =>{
-    res.redirect('/login'); //this will call the /anotherRoute route in the API
+    res.redirect('/login'); 
   });
 
 //login page
@@ -73,18 +82,23 @@ app.post('/login', async (req, res) => {
             throw Error("Incorrect username or password");
         }
         else{
-            req.session.user = {
-                api_key: process.env.API_KEY,
-              };
-              req.session.save();
-              res.redirect("/discover");
+            userConst.user_id = user.user_id;
+            userConst.username = user.username;
+            userConst.first_name = user.first_name;
+            userConst.last_name = user.last_name;
+            userConst.email = user.email;
+
+            req.session.user = userConst;
+            req.session.save();
+            res.redirect("/profile");
         }
 
         })
 
         .catch(function (err) {
-            res.send(err.message)
-            res.redirect("/register")
+            //res.send(err.message)
+            console.log(err.message);
+            res.redirect("/login");
           });
 
 });
@@ -107,7 +121,7 @@ app.post('/register', async (req, res) => {
     if(req.body.password!=req.body.password_confirm){
         console.log("Passwords do not match!");
         res.redirect('register');
-    }
+    }else{
     const hash = await bcrypt.hash(req.body.password, 10);
     const query = 'insert into users (first_name, last_name, email, username, password) values ($1, $2, $3, $4, $5);';
     db.any(query, [
@@ -118,13 +132,14 @@ app.post('/register', async (req, res) => {
         hash
     ])
     .then(function (data) {
-        res.redirect('login');
+        console.log("successfully registered");
+        res.redirect('/');
     })
     .catch(function (err) {
         console.log(err);
-        res.redirect('register');
+        res.redirect('/register');
     });
-});
+}});
 
 app.post('/posting', (req, res) => {
     req.session.user;
@@ -152,7 +167,6 @@ app.post('/posting', (req, res) => {
 });
 
 //commented out for testing purposes 
-
 // const auth = (req, res, next) => {
 //     if (!req.session.user) {
 //         req.session.message = "Please Register";
@@ -162,6 +176,22 @@ app.post('/posting', (req, res) => {
 // };
 
 // app.use(auth);
+
+app.get('/profile', (req, res) => {
+    res.render('pages/profile', {
+        username: req.session.user.username,
+        first_name: req.session.user.first_name,
+        last_name: req.session.user.last_name,
+        email: req.session.user.email
+      });
+});
+
+app.get('/home', (req, res) => {
+    const query = 'select * from things order by thing_id desc limit 10';
+    db.any(query).then(data => {
+        res.render('pages/home', {data:data});
+    });
+});
 
 app.listen(3000);
 console.log('Server is listening on port 3000');
