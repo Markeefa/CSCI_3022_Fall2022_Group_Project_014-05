@@ -181,12 +181,60 @@ app.post('/posting', (req, res) => {
 // app.use(auth);
 
 app.get('/profile', (req, res) => {
-    res.render('pages/profile', {
-        username: req.session.user.username,
-        first_name: req.session.user.first_name,
-        last_name: req.session.user.last_name,
-        email: req.session.user.email
-      });
+    const query = 'DROP VIEW IF EXISTS myReviews; CREATE VIEW myReviews AS SELECT reviews.review_id, reviews.user_posted_id, reviews.review, reviews.val, reviews.year, reviews.month, reviews.day, things.thing_id, things.title, things.image_url FROM reviews INNER JOIN things ON reviews.thing_reviewed_id = things.thing_id; SELECT * FROM myReviews WHERE user_posted_id = (SELECT user_id FROM users WHERE username = $1);';
+    db.any(query, req.session.user.username)
+        .then(function (data) {
+            //console.log(data);
+            res.render('pages/profile', {
+                username: req.session.user.username,
+                first_name: req.session.user.first_name,
+                last_name: req.session.user.last_name,
+                email: req.session.user.email,
+                isSelf: true,
+                reviews: data
+            });
+        })
+        .catch(function (err) {
+            console.log(err);
+            res.redirect('/');
+        })
+});
+
+app.post('/profile', async (req, res) => {
+    if (req.body.password != req.body.confirm_password) {
+        throw new Error(`Passwords not the same!`);
+    }
+    
+    const hash = await bcrypt.hash(req.body.password, 10);
+    const query = 'UPDATE users SET first_name = $1, last_name = $2, password = $3 WHERE username=$4';
+    db.any(query, [req.body.first_name, req.body.last_name, hash, req.session.user.username])
+        .then(function (data) {
+            console.log("Data successfully updated");
+            userConst.first_name = req.body.first_name;
+            userConst.last_name = req.body.last_name;
+
+            req.session.user = userConst;
+            req.session.save();
+            res.redirect('/profile');
+        })
+        .catch(function (err) {
+            console.log(err);
+            res.redirect('/profile');
+        });
+
+})
+
+app.post('/editReview', (req, res) => {
+    const query = 'UPDATE reviews SET review = $1, val = $2 WHERE review_id = $3';
+    db.any(query, [req.body.reviewInput, req.body.vote, req.body.SubmitID])
+        .then(function (data) {
+            console.log("Successfully updated");
+            res.redirect('/profile');
+        })
+        .catch (function (err) {
+            console.log(err);
+            res.redirect('/');
+        })
 });
 
 app.get('/home', (req, res) => {
