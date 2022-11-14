@@ -8,7 +8,6 @@ const bcrypt = require('bcrypt');
 const axios = require('axios');
 const { request } = require('express');
 
-// database configuration
 const dbConfig = {
     host: 'db',
     port: 5432,
@@ -16,7 +15,7 @@ const dbConfig = {
     user: process.env.POSTGRES_USER,
     password: process.env.POSTGRES_PASSWORD,
 };
-  
+
 const db = pgp(dbConfig);
   
 // test your database
@@ -44,15 +43,15 @@ app.use(
         })
     );
       
-    app.use(
-        bodyParser.urlencoded({
+app.use(
+    bodyParser.urlencoded({
         extended: true,
     })
 );
 
 //Redirect to the login page
 app.get('/', (req, res) =>{
-    res.redirect('pages/register'); //this will call the /anotherRoute route in the API
+    res.redirect('/login'); //this will call the /anotherRoute route in the API
   });
 
 //login page
@@ -92,24 +91,13 @@ app.post('/login', async (req, res) => {
 
 });
 
-// Authentication Middleware.
-const auth = (req, res, next) => {
-    if (!req.session.user) {
-      // Default to register page.
-      return res.redirect('/register');
-    }
-    next();
-  };
-  
-  // Authentication Required
-  app.use(auth);
-
 // Logout
 app.get("/logout", (req, res) => {
     req.session.destroy();
     res.render("pages/login");
 });
 
+<<<<<<< HEAD
 // GET /Items
 app.get('/items', (req, res) => {
   const query = "SELECT title, image_url,category, description,upvotes from things;"
@@ -140,5 +128,50 @@ app.post('/items', (req, res) => {
 })
 
 //Make sure server is listening for client requests on port 3000
+=======
+app.get('/register', (req, res) => {
+    res.render('pages/register');
+});
+
+app.get('/posting', (req, res) => {
+    res.render('pages/posting');
+});
+
+app.post('/register', async (req, res) => {
+    if(req.body.password!=req.body.password_confirm){
+        console.log("Passwords do not match!");
+        res.redirect('register');
+    }
+    const hash = await bcrypt.hash(req.body.password, 10);
+    const query = 'insert into users (first_name, last_name, email, username, password) values ($1, $2, $3, $4, $5);';
+    db.any(query, [
+        req.body.first_name,
+        req.body.last_name,
+        req.body.email,
+        req.body.username,
+        hash
+    ])
+    .then(function (data) {
+        res.redirect('login');
+    })
+    .catch(function (err) {
+        console.log(err);
+        res.redirect('register');
+    });
+});
+
+//commented out for testing purposes 
+
+// const auth = (req, res, next) => {
+//     if (!req.session.user) {
+//         req.session.message = "Please Register";
+//         return res.redirect('/register');
+//     }
+//     next();
+// };
+
+// app.use(auth);
+
+>>>>>>> aab6fd7b3da97dbf2b9255f2e51fb7c90ad8c7c4
 app.listen(3000);
 console.log('Server is listening on port 3000');
