@@ -17,6 +17,15 @@ const dbConfig = {
 };
 
 const db = pgp(dbConfig);
+
+// User setup
+const userConst = {
+    user_id: undefined,
+    username: undefined,
+    first_name: undefined,
+    last_name: undefined,
+    email: undefined,
+};
   
 // test your database
 db.connect()
@@ -51,7 +60,7 @@ app.use(
 
 //Redirect to the login page
 app.get('/', (req, res) =>{
-    res.redirect('/login'); //this will call the /anotherRoute route in the API
+    res.redirect('/login'); 
   });
 
 //login page
@@ -75,18 +84,23 @@ app.post('/login', async (req, res) => {
             throw Error("Incorrect username or password");
         }
         else{
-            req.session.user = {
-                api_key: process.env.API_KEY,
-              };
-              req.session.save();
-              res.redirect("/discover");
+            userConst.user_id = user.user_id;
+            userConst.username = user.username;
+            userConst.first_name = user.first_name;
+            userConst.last_name = user.last_name;
+            userConst.email = user.email;
+
+            req.session.user = userConst;
+            req.session.save();
+            res.redirect("/profile");
         }
 
         })
 
         .catch(function (err) {
-            res.send(err.message)
-            res.redirect("/register")
+            //res.send(err.message)
+            console.log(err.message);
+            res.redirect("/login");
           });
 
 });
@@ -97,7 +111,6 @@ app.get("/logout", (req, res) => {
     res.render("pages/login");
 });
 
-<<<<<<< HEAD
 // GET /Items
 app.get('/items', (req, res) => {
   const query = "SELECT title, image_url,category, description,upvotes from things;"
@@ -141,7 +154,7 @@ app.post('/register', async (req, res) => {
     if(req.body.password!=req.body.password_confirm){
         console.log("Passwords do not match!");
         res.redirect('register');
-    }
+    }else{
     const hash = await bcrypt.hash(req.body.password, 10);
     const query = 'insert into users (first_name, last_name, email, username, password) values ($1, $2, $3, $4, $5);';
     db.any(query, [
@@ -152,16 +165,44 @@ app.post('/register', async (req, res) => {
         hash
     ])
     .then(function (data) {
-        res.redirect('login');
+        console.log("successfully registered");
+        res.redirect('/');
     })
     .catch(function (err) {
         console.log(err);
+        res.redirect('/register');
+    });
+}});
+
+app.post('/posting', (req, res) => {
+    req.session.user;
+    let day=new Date().getDate()
+    let month=new Date().getMonth()+1
+    let year=new Date().getFullYear()
+    const query = 'insert into things (user_posted_id, title, description, year, month, day, image_url, upvotes, downvotes, category)values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)';
+    db.any(query, [
+        0,
+        //req.session.user.user_id,
+        req.body.title,
+        req.body.description,
+        year,
+        month,
+        day,
+        0,
+        0,
+        0,
+        req.body.category,
+    ])
+    .then(function (data) {
         res.redirect('register');
+    })
+    .catch(function (err) {
+        console.log(err);
+        res.redirect('posting');
     });
 });
 
 //commented out for testing purposes 
-
 // const auth = (req, res, next) => {
 //     if (!req.session.user) {
 //         req.session.message = "Please Register";
@@ -172,6 +213,69 @@ app.post('/register', async (req, res) => {
 
 // app.use(auth);
 
->>>>>>> aab6fd7b3da97dbf2b9255f2e51fb7c90ad8c7c4
+app.get('/profile', (req, res) => {
+    const query = 'DROP VIEW IF EXISTS myReviews; CREATE VIEW myReviews AS SELECT reviews.review_id, reviews.user_posted_id, reviews.review, reviews.val, reviews.year, reviews.month, reviews.day, things.thing_id, things.title, things.image_url FROM reviews INNER JOIN things ON reviews.thing_reviewed_id = things.thing_id; SELECT * FROM myReviews WHERE user_posted_id = (SELECT user_id FROM users WHERE username = $1);';
+    db.any(query, req.session.user.username)
+        .then(function (data) {
+            //console.log(data);
+            res.render('pages/profile', {
+                username: req.session.user.username,
+                first_name: req.session.user.first_name,
+                last_name: req.session.user.last_name,
+                email: req.session.user.email,
+                isSelf: true,
+                reviews: data
+            });
+        })
+        .catch(function (err) {
+            console.log(err);
+            res.redirect('/');
+        })
+});
+
+app.post('/profile', async (req, res) => {
+    if (req.body.password != req.body.confirm_password) {
+        throw new Error(`Passwords not the same!`);
+    }
+    
+    const hash = await bcrypt.hash(req.body.password, 10);
+    const query = 'UPDATE users SET first_name = $1, last_name = $2, password = $3 WHERE username=$4';
+    db.any(query, [req.body.first_name, req.body.last_name, hash, req.session.user.username])
+        .then(function (data) {
+            console.log("Data successfully updated");
+            userConst.first_name = req.body.first_name;
+            userConst.last_name = req.body.last_name;
+
+            req.session.user = userConst;
+            req.session.save();
+            res.redirect('/profile');
+        })
+        .catch(function (err) {
+            console.log(err);
+            res.redirect('/profile');
+        });
+
+})
+
+app.post('/editReview', (req, res) => {
+    const query = 'UPDATE reviews SET review = $1, val = $2 WHERE review_id = $3';
+    db.any(query, [req.body.reviewInput, req.body.vote, req.body.SubmitID])
+        .then(function (data) {
+            console.log("Successfully updated");
+            res.redirect('/profile');
+        })
+        .catch (function (err) {
+            console.log(err);
+            res.redirect('/');
+        })
+});
+
+app.get('/home', (req, res) => {
+    const query = 'select * from things order by thing_id desc limit 10';
+    db.any(query).then(data => {
+        res.render('pages/home', {data:data});
+    });
+});
+
 app.listen(3000);
 console.log('Server is listening on port 3000');

@@ -1,0 +1,76 @@
+<%- include ('../partials/header') %>
+<%- include ('../partials/menu') %>
+
+
+
+
+
+<main>
+    <div class="container">
+        <%- include('../partials/editReview.ejs'); %>
+        <%- include('../partials/editProfile.ejs'); %>
+        <% 
+            if (isSelf == true) {
+                
+                %><h1>Hello, <%= first_name %>  <%= last_name %></h1>
+                <a data-bs-toggle="modal" data-bs-target="#profileModal" class="btn btn-primary mt-5">Edit Profile</a>
+                <h3 class="mt-5">Your Reviews:</h3>
+                <%
+            } else {
+
+                %><h1>Reviews by <%= first_name %> </h1> <%
+            }
+            var rows = '<div class="row mt-4">';
+            var column = 1;
+            var maxColumn = 2;
+            var img = "";
+            var link = "";
+            var upvote = "https://cdn-icons-png.flaticon.com/512/25/25297.png";
+            var downvote = "https://cdn-icons-png.flaticon.com/512/1633/1633636.png";
+            var vote = "";
+            var title = "";
+            var contact = 'contact-popup';
+ 
+            function update_modal(reviewTitle) {
+                const reviewInput = document.getElementById("reviewInput");
+                const title = document.getElementById("modal-title");
+                //reviewInput.innerHTML = reviewText;
+                title.innerHTML = reviewTitle;
+                //console.log(id);
+            }
+            if (reviews) { 
+                reviews.forEach(function (review) {
+                    img = review.image_url;
+                    link = '/item' + review.thing_id;
+
+                    rows += '<div class="col">';
+                    rows += '<div class="card mb-3" style="max-width: 540px;"><div class="row mt-3 mb-3">';
+                    rows += '<div class="col-md-4"><img src="' + img + '" class="img-fluid rounded-start"><a href="' + link + '" class="stretched-link""></a></div>';
+                    rows += '<div class="col-md-5"><div class="card-body">';
+                    rows += '<h5 class="card-title">' + review.title + '</h5>';
+                    rows += '<p class="card-text">' + review.review + '</p>';
+                    rows += '<p class="card-text"><small class="text-muted">Last Updated ' + review.month + '/' + review.day + '/' + review.year + '</small></p>'
+                    vote = downvote;
+                    if (review.val == 1) {
+                        vote = upvote;
+                    }
+                    rows += '</div></div>';
+                    rows += '<div class="col-md-3"><img class="img-fluid rounded-start" src ="' + vote + '" width="80" height="80">';
+                    %> <%- rows %>
+                    <a data-bs-toggle="modal" onclick="update_modal( '<%= review.title %>', '<%= review.review %>', '<%= review.review_id %>')" data-bs-target="#reviewModal" class="btn btn-primary mt-5">Edit Review</a>'
+                    
+                    <% rows = '</div></div></div></div>';
+                    column += 1;
+                    if (column > maxColumn) {
+                        column = 1;
+                        rows += '</div><div class="row mt-4">';
+                    }
+                })
+                    %>
+                <%- rows %> 
+            <% } %> 
+        </div>
+    </div>
+</main>
+
+<%- include ('../partials/footer') %>
