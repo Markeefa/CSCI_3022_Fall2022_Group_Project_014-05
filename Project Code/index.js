@@ -1,3 +1,4 @@
+
 const express = require('express');
 const app = express();
 const pgp = require('pg-promise')();
@@ -5,6 +6,7 @@ const bodyParser = require('body-parser');
 const session = require('express-session');
 const bcrypt = require('bcrypt');
 const axios = require('axios');
+const { request } = require('express');
 
 const dbConfig = {
     host: 'db',
@@ -109,6 +111,37 @@ app.get("/logout", (req, res) => {
     res.render("pages/login");
 });
 
+// GET /Items
+app.get('/items', (req, res) => {
+  const query = "SELECT title, image_url,category, description,upvotes from things;"
+   db.any(query)
+      .then(function (data) {
+          //console.log(data);
+          res.render('pages/Items', {
+              title: req.title,
+              image_url: req.title,
+              category: req.category,
+              description: req.category,
+              upvotes: req.upvotes,
+              reviews: data
+          });
+      })
+      .catch(function (err) {
+          console.log(err);
+          res.redirect('/');
+      })
+});
+
+//POST Items
+app.post('/items', (req, res) => {
+  const query = ""
+
+  db.any(query)
+  .then
+})
+
+//Make sure server is listening for client requests on port 3000
+=======
 app.get('/register', (req, res) => {
     res.render('pages/register');
 });
