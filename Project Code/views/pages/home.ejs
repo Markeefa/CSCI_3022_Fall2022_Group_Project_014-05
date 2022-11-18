@@ -4,9 +4,8 @@
 <div class="container">
     <h1>Newest Posts</h1>
     <table>
-        <tr>
     <% for(var i = 0; i < 10; i++) { %>
-        <% if(i==5){ %>
+        <% if(i%5==0){ %>
             <tr>
         <% } %>
         <td>
@@ -31,11 +30,10 @@
             </div>
         </div>
         </td>
-        <% if(i==10){ %>
+        <% if((i-4)%5==0){ %>
             </tr>
         <% } %>
     <% } %>
-        </tr>
     </table>
 </div>
 

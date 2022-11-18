@@ -1,61 +1,55 @@
-<main>
+<%- include ('../partials/header') %>
+<%- include ('../partials/menu') %>
+
   <div class="container">
-    <form action="/register" method="POST">
-      <table class="center">
-        <tr>
-          <th>Enter your information to create a new account</th>
-        </tr>
-        <tr>
-          <td>
-            <input type="text" name="first_name" id="first_name" placeholder="First Name" required>
-          </td>
-          <td>
-            <input type="text" name="last_name" id="last_name" placeholder="Last Name" required>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            <input type="text" name="username" id="username" placeholder="username" required>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            <input type="email" name="email" id="email" placeholder="CU Email Address" required>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            <input type="text" name="password" id="password" placeholder="Password" required>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            <input type="text" name="password_confirm" id="password_confirm" placeholder="Confirm Password" required>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            <input type="checkbox" id="terms_and_conditions" required>
-          </td>
-          <td>
-            <label>I have read and agree to the </label>
-            <a href="https:://example.com">Terms and Conditions</a>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            <button class="btn btn-primary" type="submit">Sign Up</button>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            Already registered?
-          </td>
-          <td>
-            <a href="/login">Log In</a>
-          </td>
-        </tr>
-      </table>
-    </form>
+    <h1>Register</h1>
+    <form action="/register" method="post">
+      <div class="form-group row">
+        <label for="first_name" class="col-sm-2 col-form-label">First Name</label>
+        <div class="col-sm-10">
+          <input type="text"  class="form-control" id="first_name" placeholder="First Name" name="first_name">
+        </div>
+      </div>
+      <div class="form-group row">
+        <label for="last_name" class="col-sm-2 col-form-label">Last Name</label>
+        <div class="col-sm-10">
+          <input type="text"  class="form-control" id="last_name" placeholder="Last Name" name="last_name">
+        </div>
+      </div>
+      <div class="form-group row">
+        <label for="username" class="col-sm-2 col-form-label">Username</label>
+        <div class="col-sm-10">
+          <input type="text"  class="form-control" id="username" placeholder="Username" name="username">
+        </div>
+      </div>
+      <div class="form-group row">
+        <label for="emial" class="col-sm-2 col-form-label">Email</label>
+        <div class="col-sm-10">
+          <input type="email"  class="form-control" id="email" placeholder="Email" name="email">
+        </div>
+      </div>
+      <div class="form-group row">
+        <label for="password_confirm" class="col-sm-2 col-form-label">Password</label>
+        <div class="col-sm-10">
+          <input type="password" class="form-control" id="password" placeholder="Password" name="password">
+        </div>
+      </div>
+      <div class="form-group row">
+        <label for="password_confirm" class="col-sm-2 col-form-label">Confirm Password</label>
+        <div class="col-sm-10">
+          <input type="password" class="form-control" id="password_confirm" placeholder="Confirm Password" name="password_confirm">
+        </div>
+      </div>
+      <hr>
+      <div class="text-center">
+        <div class="col-md-10">
+        <p>Already have an account? <a href="/login">Register</a></p>
+      </div>
+      <div class="col-md-10">
+        <button type="submit" class="form-element form-button form-button form-button-submitA"
+        data-nlok-ref-guid="fb81c9d6-5e2c-4c42-f2b8-cb3e1e24b3c2">Register</button>
+      </div>
+      </div>
+      </form>
   </div>
-</main>
+<%- include ('../partials/footer') %>
