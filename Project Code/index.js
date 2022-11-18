@@ -279,7 +279,7 @@ app.post('/editReview', (req, res) => {
 });
 
 app.get('/home', (req, res) => {
-    const query = 'select * from things order by thing_id desc limit 10';
+    const query = 'select * from things order by thing_id desc';
     db.any(query).then(data => {
         res.render('pages/home', {data:data});
     });
