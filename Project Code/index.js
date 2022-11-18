@@ -281,7 +281,6 @@ app.post('/editReview', (req, res) => {
 app.get('/home', (req, res) => {
     const query = 'select * from things order by thing_id desc';
     db.any(query).then(data => {
-        console.log(data);
         res.render('pages/home', {data:data});
     });
 });
