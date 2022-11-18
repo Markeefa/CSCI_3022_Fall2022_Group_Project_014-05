@@ -20,6 +20,15 @@
       idSpot.value = id;
       
   }
+    function add_modal(reviewTitle, reviewText, id) {
+      const reviewInput = document.getElementById("addreviewInput");
+      const title = document.getElementById("modal-title");
+      const idSpot = document.getElementById("SubmitID");
+      reviewInput.innerHTML = reviewText;
+      title.innerHTML = "Create Review for " + reviewTitle;
+      idSpot.value = id;
+      
+  }
     </script>
   </head>
   <body>

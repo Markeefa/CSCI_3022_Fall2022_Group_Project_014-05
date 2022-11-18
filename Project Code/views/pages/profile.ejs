@@ -31,17 +31,10 @@
             var title = "";
             var contact = 'contact-popup';
  
-            function update_modal(reviewTitle) {
-                const reviewInput = document.getElementById("reviewInput");
-                const title = document.getElementById("modal-title");
-                //reviewInput.innerHTML = reviewText;
-                title.innerHTML = reviewTitle;
-                //console.log(id);
-            }
             if (reviews) { 
                 reviews.forEach(function (review) {
                     img = review.image_url;
-                    link = '/item' + review.thing_id;
+                    link = '/item/' + review.thing_id;
 
                     rows += '<div class="col">';
                     rows += '<div class="card mb-3" style="max-width: 540px;"><div class="row mt-3 mb-3">';
