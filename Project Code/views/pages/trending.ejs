@@ -2,7 +2,7 @@
 <%- include ('../partials/menu') %>
 
 <div class="container">
-    <h1>Newest Posts</h1>
+    <h1>Trending Posts</h1>
     <table>
     <% for(var i = 0; i < data.length; i++) { %>
         <% if(i%5==0){ %>
@@ -23,6 +23,7 @@
                         <% }else{ %>
                         <h4><%= 100*(data[i].upvotes/(data[i].upvotes+data[i].downvotes)) %>% Upvoted</h4>
                         <% } %>
+                        <h4><%= data[i].total_votes %> Total</h4>
                     </td>
                     <td>
                 <form action='/items/<%-data[i].thing_id%>' method="get">
