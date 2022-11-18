@@ -168,28 +168,37 @@ app.get('/posting', (req, res) => {
 });
 
 app.post('/register', async (req, res) => {
-    if(req.body.password!=req.body.password_confirm){
-        console.log("Passwords do not match!");
-        res.redirect('register');
-    }else{
-    const hash = await bcrypt.hash(req.body.password, 10);
-    const query = 'insert into users (first_name, last_name, email, username, password) values ($1, $2, $3, $4, $5);';
-    db.any(query, [
-        req.body.first_name,
-        req.body.last_name,
-        req.body.email,
-        req.body.username,
-        hash
-    ])
-    .then(function (data) {
-        console.log("successfully registered");
-        res.redirect('/');
-    })
-    .catch(function (err) {
-        console.log(err);
-        res.redirect('/register');
+    const query0 = 'select * from users where username = $1';
+    db.any(query0, [req.body.username]).then(async function(data) {
+        if(data[0]!=undefined){
+            console.log('Username is taken');
+            res.redirect('register');
+        }else{
+            if(req.body.password!=req.body.password_confirm){
+                console.log("Passwords do not match!");
+                res.redirect('register');
+            }else{
+            const hash = await bcrypt.hash(req.body.password, 10);
+            const query = 'insert into users (first_name, last_name, email, username, password) values ($1, $2, $3, $4, $5);';
+            db.any(query, [
+                req.body.first_name,
+                req.body.last_name,
+                req.body.email,
+                req.body.username,
+                hash
+            ])
+            .then(function (data) {
+                console.log("successfully registered");
+                res.redirect('/');
+            })
+            .catch(function (err) {
+                console.log(err);
+                res.redirect('/register');
+            });
+        }
+        }
     });
-}});
+});
 
 app.post('/posting', (req, res) => {
     req.session.user;
@@ -288,7 +297,7 @@ app.post('/editReview', (req, res) => {
 });
 
 app.get('/home', (req, res) => {
-    const query = 'select * from things order by thing_id desc limit 10';
+    const query = 'select * from things order by thing_id desc';
     db.any(query).then(data => {
         res.render('pages/home', {data:data});
     });
