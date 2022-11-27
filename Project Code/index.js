@@ -290,6 +290,12 @@ app.post('/editReview', (req, res) => {
             res.redirect('/');
         })
 });
+app.post('/search', (req, res) => {
+    const query = 'SELECT * FROM things WHERE UPPER(TITLE) LIKE UPPER($1);';
+    db.any(query, [req.body.searchThing]).then(data=>{
+        res.render('pages/search', {data:data});
+    });
+});
 
 app.get('/home', (req, res) => {
     const query = 'select * from things order by thing_id desc';
