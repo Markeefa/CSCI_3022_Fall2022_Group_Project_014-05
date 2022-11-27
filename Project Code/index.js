@@ -112,18 +112,30 @@ app.get("/logout", (req, res) => {
 });
 
 // GET /Items
-app.get('/items', (req, res) => {
-  const query = "SELECT title, image_url,category, description,upvotes from things;"
-   db.any(query)
+// /item
+
+app.get('/item/:thing_id', (req, res) => {
+  const thingId = parseInt(req.params.thing_id);
+  const query = "DROP VIEW IF EXISTS myReviews; CREATE VIEW myReviews AS SELECT reviews.review_id, reviews.user_posted_id, reviews.review, reviews.val, reviews.year, reviews.month, reviews.day, things.thing_id, things.title, things.description, things.category, things.upvotes, things.downvotes, things.image_url FROM reviews INNER JOIN things ON reviews.thing_reviewed_id = things.thing_id; SELECT * FROM myReviews WHERE thing_id = $1;"
+  var reviews = []; 
+  db.any(query, [thingId])
       .then(function (data) {
-          //console.log(data);
+          data.forEach(function (thing) {
+            const reviewConst = {
+              review_id: thing.review_id,
+              user_posted_id: thing.user_posted_id,
+              review: thing.review,
+              val: thing.val,
+              year: thing.year,
+              month: thing.month,
+              day: thing.day
+            };
+            reviews.push(reviewConst)
+          })
+          console.log(reviews);
           res.render('pages/Items', {
-              title: req.title,
-              image_url: req.title,
-              category: req.category,
-              description: req.category,
-              upvotes: req.upvotes,
-              reviews: data
+            thingData: data,
+            reviews: reviews
           });
       })
       .catch(function (err) {
@@ -132,13 +144,19 @@ app.get('/items', (req, res) => {
       })
 });
 
-//POST Items
-app.post('/items', (req, res) => {
-  const query = ""
+app.post('/addReview', (req, res) => {
+    const query = 'INSERT INTO reviews (description,review,val) values ($1, $2, $3);';
+    db.any(query, [req.body.newreviewInput, req.body.vote, req.body.SubmitID])
+        .then(function (data) {
+            console.log("Successfully added review");
+            res.redirect('/profile');
+        })
+        .catch (function (err) {
+            console.log(err);
+            res.redirect('/');
+        })
+});
 
-  db.any(query)
-  .then
-})
 
 //Make sure server is listening for client requests on port 3000
 app.get('/register', (req, res) => {
