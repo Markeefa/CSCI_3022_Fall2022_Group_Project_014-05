@@ -272,6 +272,44 @@ app.get('/profile', (req, res) => {
         })
 });
 
+app.get('/profile/:username/posts', (req, res) => {
+    const query = 'SELECT thing_id, title, description, image_url, upvotes, total_votes, year, month, day FROM things WHERE user_posted_id = (SELECT user_id FROM users WHERE username = $1);';
+    db.any(query, req.params.username)
+        .then(function (data) {
+            console.log(data);
+            res.render('pages/posts', {
+                username: req.params.username,
+                reviews: data
+            });
+        })
+        .catch(function (err) {
+            console.log(err);
+            res.redirect('/');
+        })
+});
+
+app.get('/profile/:username', (req, res) => {
+    const query = 'DROP VIEW IF EXISTS myReviews; CREATE VIEW myReviews AS SELECT reviews.review_id, reviews.user_posted_id, reviews.review, reviews.val, reviews.year, reviews.month, reviews.day, things.thing_id, things.title, things.image_url FROM reviews INNER JOIN things ON reviews.thing_reviewed_id = things.thing_id; SELECT * FROM myReviews WHERE user_posted_id = (SELECT user_id FROM users WHERE username = $1);';
+
+    if (req.params.username == req.session.user.username) {
+        res.redirect('/profile');
+    } else {
+        db.any(query, req.params.username)
+        .then(function (data) {
+            res.render('pages/profile', {
+                username: req.params.username,
+                isSelf: false,
+                reviews: data
+            });
+        })
+        .catch(function (err) {
+            console.log(err);
+            res.redirect('/');
+        })
+    }
+    
+});
+
 app.post('/profile', async (req, res) => {
     if (req.body.password != req.body.confirm_password) {
         throw new Error(`Passwords not the same!`);
@@ -297,8 +335,12 @@ app.post('/profile', async (req, res) => {
 })
 
 app.post('/editReview', (req, res) => {
-    const query = 'UPDATE reviews SET review = $1, val = $2 WHERE review_id = $3';
-    db.any(query, [req.body.reviewInput, req.body.vote, req.body.SubmitID])
+    
+    let day=new Date().getDate()
+    let month=new Date().getMonth()+1
+    let year=new Date().getFullYear()
+    const query = 'UPDATE reviews SET review = $1, val = $2, day = $4, month = $5, year = $6 WHERE review_id = $3';
+    db.any(query, [req.body.reviewInput, req.body.vote, req.body.SubmitID, day, month, year])
         .then(function (data) {
             console.log("Successfully updated");
             res.redirect('/profile');
