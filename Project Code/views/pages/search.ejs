@@ -1,0 +1,44 @@
+<%- include ('../partials/header') %>
+<%- include ('../partials/menu') %>
+
+<div class="container">
+    <h1>Search Results...</h1>
+    <table>
+    <% for(var i = 0; i < data.length; i++) { %>
+        <% if(i%5==0){ %>
+            <tr>
+        <% } %>
+        <td>
+        <div class="card">
+            <img src="<%=data[i].image_url%>" style="width:100%">
+            <div class="container">
+                <table>
+                <tr>
+                <h4><b><%= data[i].title %></b></h4>
+                </tr>
+                <tr>
+                    <td>
+                        <% if(data[i].upvotes+data[i].downvotes==0) { %>
+                            <h4>0% Upvoted</h4>
+                        <% }else{ %>
+                        <h4><%= 100*(data[i].upvotes/(data[i].upvotes+data[i].downvotes)) %>% Upvoted</h4>
+                        <% } %>
+                    </td>
+                    <td>
+                <form action='/items/<%-data[i].thing_id%>' method="get">
+                    <button type="submit">View Post</button>
+                </form>
+                    </td>
+                </tr>
+                </table>
+            </div>
+        </div>
+        </td>
+        <% if((i-4)%5==0){ %>
+            </tr>
+        <% } %>
+    <% } %>
+    </table>
+</div>
+
+<%- include ('../partials/footer') %>
