@@ -145,9 +145,6 @@ app.get('/register', (req, res) => {
     res.render('pages/register');
 });
 
-app.get('/posting', (req, res) => {
-    res.render('pages/posting');
-});
 
 app.post('/register', async (req, res) => {
     const query0 = 'select * from users where username = $1';
@@ -182,27 +179,28 @@ app.post('/register', async (req, res) => {
     });
 });
 
+
 app.post('/posting', (req, res) => {
     req.session.user;
     let day=new Date().getDate()
     let month=new Date().getMonth()+1
     let year=new Date().getFullYear()
-    const query = 'insert into things (user_posted_id, title, description, year, month, day, image_url, upvotes, downvotes, category)values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)';
+    const query = 'insert into things (user_posted_id, title, description, year, month, day, image_url, upvotes, downvotes, total_votes, category)values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)';
     db.any(query, [
-        0,
-        //req.session.user.user_id,
+        req.session.user.user_id,
         req.body.title,
         req.body.description,
         year,
         month,
         day,
+        req.body.image_url,
         0,
         0,
         0,
-        req.body.category,
+        req.body.category
     ])
     .then(function (data) {
-        res.redirect('register');
+        res.redirect('home');
     })
     .catch(function (err) {
         console.log(err);
@@ -210,16 +208,31 @@ app.post('/posting', (req, res) => {
     });
 });
 
-//commented out for testing purposes 
-// const auth = (req, res, next) => {
-//     if (!req.session.user) {
-//         req.session.message = "Please Register";
-//         return res.redirect('/register');
-//     }
-//     next();
-// };
+const auth = (req, res, next) => {
+    if (!req.session.user) {
+        req.session.message = "Please Register";
+        return res.redirect('/register');
+    }
+    next();
+};
 
-// app.use(auth);
+app.use(auth);
+
+const cloudName = "hzxyensd5"; // replace with your own cloud name
+const uploadPreset = "aoh4fpwm"; // replace with your own upload preset
+
+// Remove the comments from the code below to add
+// additional functionality.
+// Note that these are only a few examples, to see
+// the full list of possible parameters that you
+// can add see:
+//   https://cloudinary.com/documentation/upload_widget_reference
+
+
+
+app.get('/posting', (req, res) => {
+    res.render('pages/posting');
+});
 
 app.get('/profile', (req, res) => {
     const query = 'DROP VIEW IF EXISTS myReviews; CREATE VIEW myReviews AS SELECT reviews.review_id, reviews.user_posted_id, reviews.review, reviews.val, reviews.year, reviews.month, reviews.day, things.thing_id, things.title, things.image_url FROM reviews INNER JOIN things ON reviews.thing_reviewed_id = things.thing_id; SELECT * FROM myReviews WHERE user_posted_id = (SELECT user_id FROM users WHERE username = $1);';
