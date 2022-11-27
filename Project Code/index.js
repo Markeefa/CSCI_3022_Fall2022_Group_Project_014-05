@@ -297,6 +297,13 @@ app.get('/home', (req, res) => {
         res.render('pages/home', {data:data});
     });
 });
+app.get('/trending', (req, res) => {
+    // const query = 'select *,upvotes+downvotes as totvotes from things group by upvotes,downvotes';
+    const query = 'select * from things order by total_votes desc';
+    db.any(query).then(data => {
+        res.render('pages/trending', {data:data});
+    });
+});
 
 app.listen(3000);
 console.log('Server is listening on port 3000');
