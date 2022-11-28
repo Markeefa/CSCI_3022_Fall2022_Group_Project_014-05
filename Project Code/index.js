@@ -163,9 +163,6 @@ app.get('/register', (req, res) => {
     res.render('pages/register');
 });
 
-app.get('/posting', (req, res) => {
-    res.render('pages/posting');
-});
 
 app.post('/register', async (req, res) => {
     const query0 = 'select * from users where username = $1';
@@ -200,27 +197,28 @@ app.post('/register', async (req, res) => {
     });
 });
 
+
 app.post('/posting', (req, res) => {
     req.session.user;
     let day=new Date().getDate()
     let month=new Date().getMonth()+1
     let year=new Date().getFullYear()
-    const query = 'insert into things (user_posted_id, title, description, year, month, day, image_url, upvotes, downvotes, category)values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)';
+    const query = 'insert into things (user_posted_id, title, description, year, month, day, image_url, upvotes, downvotes, total_votes, category)values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)';
     db.any(query, [
-        0,
-        //req.session.user.user_id,
+        req.session.user.user_id,
         req.body.title,
         req.body.description,
         year,
         month,
         day,
+        req.body.image_url,
         0,
         0,
         0,
-        req.body.category,
+        req.body.category
     ])
     .then(function (data) {
-        res.redirect('register');
+        res.redirect('home');
     })
     .catch(function (err) {
         console.log(err);
@@ -228,16 +226,31 @@ app.post('/posting', (req, res) => {
     });
 });
 
-//commented out for testing purposes 
-// const auth = (req, res, next) => {
-//     if (!req.session.user) {
-//         req.session.message = "Please Register";
-//         return res.redirect('/register');
-//     }
-//     next();
-// };
+const auth = (req, res, next) => {
+    if (!req.session.user) {
+        req.session.message = "Please Register";
+        return res.redirect('/register');
+    }
+    next();
+};
 
-// app.use(auth);
+app.use(auth);
+
+const cloudName = "hzxyensd5"; // replace with your own cloud name
+const uploadPreset = "aoh4fpwm"; // replace with your own upload preset
+
+// Remove the comments from the code below to add
+// additional functionality.
+// Note that these are only a few examples, to see
+// the full list of possible parameters that you
+// can add see:
+//   https://cloudinary.com/documentation/upload_widget_reference
+
+
+
+app.get('/posting', (req, res) => {
+    res.render('pages/posting');
+});
 
 app.get('/profile', (req, res) => {
     const query = 'DROP VIEW IF EXISTS myReviews; CREATE VIEW myReviews AS SELECT reviews.review_id, reviews.user_posted_id, reviews.review, reviews.val, reviews.year, reviews.month, reviews.day, things.thing_id, things.title, things.image_url FROM reviews INNER JOIN things ON reviews.thing_reviewed_id = things.thing_id; SELECT * FROM myReviews WHERE user_posted_id = (SELECT user_id FROM users WHERE username = $1);';
@@ -257,6 +270,44 @@ app.get('/profile', (req, res) => {
             console.log(err);
             res.redirect('/');
         })
+});
+
+app.get('/profile/:username/posts', (req, res) => {
+    const query = 'SELECT thing_id, title, description, image_url, upvotes, total_votes, year, month, day FROM things WHERE user_posted_id = (SELECT user_id FROM users WHERE username = $1);';
+    db.any(query, req.params.username)
+        .then(function (data) {
+            console.log(data);
+            res.render('pages/posts', {
+                username: req.params.username,
+                reviews: data
+            });
+        })
+        .catch(function (err) {
+            console.log(err);
+            res.redirect('/');
+        })
+});
+
+app.get('/profile/:username', (req, res) => {
+    const query = 'DROP VIEW IF EXISTS myReviews; CREATE VIEW myReviews AS SELECT reviews.review_id, reviews.user_posted_id, reviews.review, reviews.val, reviews.year, reviews.month, reviews.day, things.thing_id, things.title, things.image_url FROM reviews INNER JOIN things ON reviews.thing_reviewed_id = things.thing_id; SELECT * FROM myReviews WHERE user_posted_id = (SELECT user_id FROM users WHERE username = $1);';
+
+    if (req.params.username == req.session.user.username) {
+        res.redirect('/profile');
+    } else {
+        db.any(query, req.params.username)
+        .then(function (data) {
+            res.render('pages/profile', {
+                username: req.params.username,
+                isSelf: false,
+                reviews: data
+            });
+        })
+        .catch(function (err) {
+            console.log(err);
+            res.redirect('/');
+        })
+    }
+    
 });
 
 app.post('/profile', async (req, res) => {
@@ -284,8 +335,12 @@ app.post('/profile', async (req, res) => {
 })
 
 app.post('/editReview', (req, res) => {
-    const query = 'UPDATE reviews SET review = $1, val = $2 WHERE review_id = $3';
-    db.any(query, [req.body.reviewInput, req.body.vote, req.body.SubmitID])
+    
+    let day=new Date().getDate()
+    let month=new Date().getMonth()+1
+    let year=new Date().getFullYear()
+    const query = 'UPDATE reviews SET review = $1, val = $2, day = $4, month = $5, year = $6 WHERE review_id = $3';
+    db.any(query, [req.body.reviewInput, req.body.vote, req.body.SubmitID, day, month, year])
         .then(function (data) {
             console.log("Successfully updated");
             res.redirect('/profile');
@@ -294,6 +349,12 @@ app.post('/editReview', (req, res) => {
             console.log(err);
             res.redirect('/');
         })
+});
+app.post('/search', (req, res) => {
+    const query = 'SELECT * FROM things WHERE UPPER(TITLE) LIKE UPPER($1);';
+    db.any(query, [req.body.searchThing]).then(data=>{
+        res.render('pages/search', {data:data});
+    });
 });
 
 app.get('/home', (req, res) => {
