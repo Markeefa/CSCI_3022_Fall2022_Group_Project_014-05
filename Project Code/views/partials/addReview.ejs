@@ -1,5 +1,5 @@
 <form action="/addReview" method="POST">
-    <div class="modal-dialog modal-dialog-centered" id="addreviewModal" tabindex="-1">
+    <div class="modal" id="addreviewModal" tabindex="-1">
         <div class="modal-dialog">
           <div class="modal-content">
             <div class="modal-header">
@@ -12,10 +12,20 @@
                     <label>Add Review</label>
                 </div>
                 <div class="col-8">
-                    <textarea name="reviewInput" id="reviewInput" class="form-control"></textarea>
+                    <textarea name="newreviewInput" id="newreviewInput" class="form-control"></textarea>
                 </div>
             </div>
-           
+            </div>
+            <div class="form-floating row g-3 align-items-center">
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" name="vote" id="inlineCheckbox1" value="1" required>
+              <label class="form-check-label" for="inlineCheckbox1">Upvote</label>
+            </div>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" name="vote" id="inlineCheckbox2" value="0" required>
+              <label class="form-check-label" for="inlineCheckbox2">Downvote</label>
+            </div>
+          </div>
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
