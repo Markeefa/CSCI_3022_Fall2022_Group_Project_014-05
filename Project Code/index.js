@@ -145,8 +145,20 @@ app.get('/item/:thing_id', (req, res) => {
 });
 
 app.post('/addReview', (req, res) => {
-    const query = 'INSERT INTO reviews (description,review,val) values ($1, $2, $3);';
-    db.any(query, [req.body.newreviewInput, req.body.vote, req.body.SubmitID])
+    let day=new Date().getDate()
+    let month=new Date().getMonth()+1
+    let year=new Date().getFullYear()
+    const query = 'INSERT INTO reviews (user_posted_id, thing_reviewed_id, year, month, day, review, val) values ($1, $2, $, $3, $4, $5, $6, $7);';
+    db.any(query, [
+        req.review_id,
+        req.user_posted_id,
+        req.thing_reviewed_id,
+        year,
+        month,
+        day,
+        req.val,
+        req.body.newreviewInput,
+        ])
         .then(function (data) {
             console.log("Successfully added review");
             res.redirect('/profile');
