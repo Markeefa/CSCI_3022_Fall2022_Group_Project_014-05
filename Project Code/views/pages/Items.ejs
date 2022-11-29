@@ -5,11 +5,11 @@
   <div class="container">
     
     <%- include('../partials/addReview.ejs'); %>
-    <a data-bs-toggle="modal" onclick="add_modal( '<%= thingData[0].title %>', ' ', '<%= thingData[0].thing_id %>')" data-bs-target="#addreviewModal" class="btn btn-primary mt-5">Create Review</a>
-
+    <div class="text-center">
     <h1><%= thingData[0].title%></h1>
-    <img src="<%= thingData[0].image_url %>">
-
+    <img src="<%= thingData[0].image_url %>" width="200px" height="200px">
+  </div>
+  
     <table class="table">
       <thead>
         <tr>
@@ -23,22 +23,25 @@
       <tbody> 
         
         <% if (reviews) { %>
-            <% reviews.forEach(function(review){ %>
-              <tr>
+          <% reviews.forEach(function(review){ %>
+            <tr>
               <td><%=review.review_id%></td>
               <td><%= review.year %></td>
-                <td><%= review.review %></td>
-                </tr>
-                                  
-           <% }); %>
-
-        <% } %>
-
-      </tbody>
+              <td><%= review.review %></td>
+            </tr>
+            
+            <% }); %>
+            
+            <% } %>
+            
+          </tbody>
+          
+        </table>
+        
+      </div>
       
-  </table>
-
-  </div>
-</main>
-
-<%- include ('../partials/footer') %>
+      <div class="text-center">
+        <a data-bs-toggle="modal" onclick="add_modal( '<%= thingData[0].title %>', ' ', '<%= thingData[0].thing_id %>')" data-bs-target="#addreviewModal" class="btn btn-primary mt-5">Create Review</a>
+      </div>
+    </main>
+    <%- include ('../partials/footer') %>

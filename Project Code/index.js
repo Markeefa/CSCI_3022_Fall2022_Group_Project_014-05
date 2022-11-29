@@ -111,9 +111,7 @@ app.get("/logout", (req, res) => {
     res.render("pages/login");
 });
 
-// GET /Items
-// /item
-
+// GET /Item
 app.get('/item/:thing_id', (req, res) => {
   const thingId = parseInt(req.params.thing_id);
   const query = "DROP VIEW IF EXISTS myReviews; CREATE VIEW myReviews AS SELECT reviews.review_id, reviews.user_posted_id, reviews.review, reviews.val, reviews.year, reviews.month, reviews.day, things.thing_id, things.title, things.description, things.category, things.upvotes, things.downvotes, things.image_url FROM reviews INNER JOIN things ON reviews.thing_reviewed_id = things.thing_id; SELECT * FROM myReviews WHERE thing_id = $1;"
@@ -145,19 +143,19 @@ app.get('/item/:thing_id', (req, res) => {
 });
 
 app.post('/addReview', (req, res) => {
+    req.session.user;
     let day=new Date().getDate()
     let month=new Date().getMonth()+1
     let year=new Date().getFullYear()
-    const query = 'INSERT INTO reviews (user_posted_id, thing_reviewed_id, year, month, day, review, val) values ($1, $2, $, $3, $4, $5, $6, $7);';
+    const query = 'INSERT INTO reviews (user_posted_id, thing_reviewed_id, year, month, day, review, val) values ($1, $2, $3, $4, $5, $6, $7);';
     db.any(query, [
-        req.review_id,
-        req.user_posted_id,
-        req.thing_reviewed_id,
+        req.session.user.user_id,
+        1,
         year,
         month,
         day,
-        req.val,
-        req.body.newreviewInput,
+        req.body.review,
+        req.body.val
         ])
         .then(function (data) {
             console.log("Successfully added review");
@@ -252,7 +250,7 @@ const cloudName = "hzxyensd5"; // replace with your own cloud name
 const uploadPreset = "aoh4fpwm"; // replace with your own upload preset
 
 // Remove the comments from the code below to add
-// additional functionality.
+// additional functionalstity.
 // Note that these are only a few examples, to see
 // the full list of possible parameters that you
 // can add see:
