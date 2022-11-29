@@ -1,0 +1,44 @@
+<%- include ('../partials/header') %>
+<%- include ('../partials/menu') %>
+
+<main>
+  <div class="container">
+    
+    <%- include('../partials/addReview.ejs'); %>
+    <a data-bs-toggle="modal" onclick="add_modal( '<%= thingData[0].title %>', ' ', '<%= thingData[0].thing_id %>')" data-bs-target="#addreviewModal" class="btn btn-primary mt-5">Create Review</a>
+
+    <h1><%= thingData[0].title%></h1>
+    <img src="<%= thingData[0].image_url %>">
+
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Review Id</th>
+          <th>Date Created</th>
+          <th>Review</th>
+          <th></th>
+        </tr>
+      </thead>
+      
+      <tbody> 
+        
+        <% if (reviews) { %>
+            <% reviews.forEach(function(review){ %>
+              <tr>
+              <td><%=review.review_id%></td>
+              <td><%= review.year %></td>
+                <td><%= review.review %></td>
+                </tr>
+                                  
+           <% }); %>
+
+        <% } %>
+
+      </tbody>
+      
+  </table>
+
+  </div>
+</main>
+
+<%- include ('../partials/footer') %>

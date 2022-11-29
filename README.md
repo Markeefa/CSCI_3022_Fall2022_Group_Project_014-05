@@ -20,7 +20,7 @@ PeoplePeople Inc. LLC CO Limited ®™.corp for profit nonprofit
 ### Team Members
 - Mark Tamale, mata9070@colorado.edu, Markeefa
 - Artur Castro, arca7881@colorado.edu, ArturACastro, 720 882-8955
-- Nick Bolger, nibo6686@colorad.edu, nibo6686, 911
+- Nick Bolger, nibo6686@colorad.edu, nibo6686, 206-595-7069
 - Assaf Boneh, asbo8637@colorado.edu, asbo8637,  720-560-9444 
 - Max Mayali, mama7243@colorado.edu, MaxM1130, 510-982-9852
 - Reda Razza, rera8642@colorado.edu, rera8642, 303 880 1973
