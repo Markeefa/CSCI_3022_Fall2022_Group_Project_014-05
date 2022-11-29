@@ -366,7 +366,18 @@ app.post('/search', (req, res) => {
         res.render('pages/search', {data:data});
     });
 });
-
+app.get('/categories', (req, res) => {
+    const query = 'select * from things order by thing_id desc';
+    db.any(query).then(data => {
+        res.render('pages/categories', {data:data});
+    });
+});
+app.post('/categories', (req, res) => {
+    const query = 'select * from things where category = $1 order by thing_id desc';
+    db.any(query, [req.body.category]).then(data => {
+        res.render('pages/categories', {data:data});
+    });
+});
 app.get('/home', (req, res) => {
     const query = 'select * from things order by thing_id desc';
     db.any(query).then(data => {
