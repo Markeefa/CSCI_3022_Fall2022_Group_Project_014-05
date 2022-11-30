@@ -2,6 +2,35 @@
 <%- include ('../partials/menu') %>
 
 <div class="container">
+
+  <div class="form-group row">
+    <h1>Create New Post</h1>
+  </div>
+  <img src= "" id="img-preview" height=360 />
+  
+  <!--Upload widget start-->
+  <button id="upload_widget" class="cloudinary-button">Upload images</button>
+
+  <script src="https://upload-widget.cloudinary.com/global/all.js" type="text/javascript"></script>  
+  
+  <script type="text/javascript">  
+  var imgPreview = document.getElementById('img-preview');
+  var myWidget = cloudinary.createUploadWidget({
+    cloudName: 'dot0ix9d8', 
+    uploadPreset: 'people_Cloudinary'}, (error, result) => { 
+      if (!error && result && result.event === "success") { 
+        console.log('Done! Here is the image info: ', result.info); 
+        imgPreview.src = result.info.secure_url;
+        image_url.value = result.info.secure_url;
+      }
+    }
+  )
+    document.getElementById("upload_widget").addEventListener("click", function(){
+      myWidget.open();
+    }, false);
+  </script>
+    <!--Upload widget end-->
+
   <form action="/posting" method="POST">
     <div class="form-group row">
         <h1>Create New Post</h1>
@@ -39,7 +68,7 @@
   <div class="form-group row">
     <label for="image_url" class="col-sm-2 col-form-label">URL</label>
     <div class="col-sm-10">
-      <input type="text" class="form-control" name="image_url" id="image_url" placeholder="URL" required>
+      <input type="hidden" class="form-control" name="image_url" id="image_url" placeholder="URL" required>
     </div>
   </div>
 <!--Upload widget end-->
