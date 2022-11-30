@@ -111,19 +111,30 @@ app.get("/logout", (req, res) => {
     res.render("pages/login");
 });
 
-// GET /Items
-app.get('/items', (req, res) => {
-  const query = "SELECT title, image_url,category, description,upvotes from things;"
-   db.any(query)
+// GET /Item
+app.get('/item/:thing_id', (req, res) => {
+  const thingId = parseInt(req.params.thing_id);
+  const query = "DROP VIEW IF EXISTS myReviews; CREATE VIEW myReviews AS SELECT reviews.review_id, reviews.user_posted_id, reviews.review, reviews.val, reviews.year, reviews.month, reviews.day, things.thing_id, things.title, things.description, things.category, things.upvotes, things.downvotes, things.image_url FROM reviews RIGHT JOIN things ON reviews.thing_reviewed_id = things.thing_id; SELECT * FROM myReviews WHERE thing_id = $1;"
+  var reviews = []; 
+  db.any(query, [thingId])
       .then(function (data) {
-          //console.log(data);
+          data.forEach(function (thing) {
+            const reviewConst = {
+              review_id: thing.review_id,
+              user_posted_id: thing.user_posted_id,
+              review: thing.review,
+              val: thing.val,
+              year: thing.year,
+              month: thing.month,
+              day: thing.day
+            };
+            reviews.push(reviewConst)
+          })
+          console.log(reviews);
           res.render('pages/Items', {
-              title: req.title,
-              image_url: req.title,
-              category: req.category,
-              description: req.category,
-              upvotes: req.upvotes,
-              reviews: data
+            thingData: data,
+            reviews: reviews,
+            thingid : thingId
           });
       })
       .catch(function (err) {
@@ -132,22 +143,38 @@ app.get('/items', (req, res) => {
       })
 });
 
-//POST Items
-app.post('/items', (req, res) => {
-  const query = ""
+app.post('/addReview/:thingid', (req, res) => {
+    req.session.user;
+    const thingid = parseInt(req.params.thingid)
+    let day=new Date().getDate()
+    let month=new Date().getMonth()+1
+    let year=new Date().getFullYear()
+    const query = 'INSERT INTO reviews (user_posted_id, thing_reviewed_id, year, month, day, review, val) values ($1, $2, $3, $4, $5, $6, $7);';
+    db.any(query, [
+        req.session.user.user_id,
+        thingid,
+        year,
+        month,
+        day,
+        req.body.review,
+        req.body.val
+        ])
+        .then(function (data) {
+            console.log("Successfully added review");
+            res.redirect('/profile');
+        })
+        .catch (function (err) {
+            console.log(err);
+            res.redirect('/');
+        })
+});
 
-  db.any(query)
-  .then
-})
 
 //Make sure server is listening for client requests on port 3000
 app.get('/register', (req, res) => {
     res.render('pages/register');
 });
 
-app.get('/posting', (req, res) => {
-    res.render('pages/posting');
-});
 
 app.post('/register', async (req, res) => {
     const query0 = 'select * from users where username = $1';
@@ -182,27 +209,28 @@ app.post('/register', async (req, res) => {
     });
 });
 
+
 app.post('/posting', (req, res) => {
     req.session.user;
     let day=new Date().getDate()
     let month=new Date().getMonth()+1
     let year=new Date().getFullYear()
-    const query = 'insert into things (user_posted_id, title, description, year, month, day, image_url, upvotes, downvotes, category)values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)';
+    const query = 'insert into things (user_posted_id, title, description, year, month, day, image_url, upvotes, downvotes, total_votes, category)values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)';
     db.any(query, [
-        0,
-        //req.session.user.user_id,
+        req.session.user.user_id,
         req.body.title,
         req.body.description,
         year,
         month,
         day,
+        req.body.image_url,
         0,
         0,
         0,
-        req.body.category,
+        req.body.category
     ])
     .then(function (data) {
-        res.redirect('register');
+        res.redirect('home');
     })
     .catch(function (err) {
         console.log(err);
@@ -210,16 +238,31 @@ app.post('/posting', (req, res) => {
     });
 });
 
-//commented out for testing purposes 
-// const auth = (req, res, next) => {
-//     if (!req.session.user) {
-//         req.session.message = "Please Register";
-//         return res.redirect('/register');
-//     }
-//     next();
-// };
+const auth = (req, res, next) => {
+    if (!req.session.user) {
+        req.session.message = "Please Register";
+        return res.redirect('/register');
+    }
+    next();
+};
 
-// app.use(auth);
+app.use(auth);
+
+const cloudName = "hzxyensd5"; // replace with your own cloud name
+const uploadPreset = "aoh4fpwm"; // replace with your own upload preset
+
+// Remove the comments from the code below to add
+// additional functionalstity.
+// Note that these are only a few examples, to see
+// the full list of possible parameters that you
+// can add see:
+//   https://cloudinary.com/documentation/upload_widget_reference
+
+
+
+app.get('/posting', (req, res) => {
+    res.render('pages/posting');
+});
 
 app.get('/profile', (req, res) => {
     const query = 'DROP VIEW IF EXISTS myReviews; CREATE VIEW myReviews AS SELECT reviews.review_id, reviews.user_posted_id, reviews.review, reviews.val, reviews.year, reviews.month, reviews.day, things.thing_id, things.title, things.image_url FROM reviews INNER JOIN things ON reviews.thing_reviewed_id = things.thing_id; SELECT * FROM myReviews WHERE user_posted_id = (SELECT user_id FROM users WHERE username = $1);';
@@ -239,6 +282,44 @@ app.get('/profile', (req, res) => {
             console.log(err);
             res.redirect('/');
         })
+});
+
+app.get('/profile/:username/posts', (req, res) => {
+    const query = 'SELECT thing_id, title, description, image_url, upvotes, total_votes, year, month, day FROM things WHERE user_posted_id = (SELECT user_id FROM users WHERE username = $1);';
+    db.any(query, req.params.username)
+        .then(function (data) {
+            console.log(data);
+            res.render('pages/posts', {
+                username: req.params.username,
+                reviews: data
+            });
+        })
+        .catch(function (err) {
+            console.log(err);
+            res.redirect('/');
+        })
+});
+
+app.get('/profile/:username', (req, res) => {
+    const query = 'DROP VIEW IF EXISTS myReviews; CREATE VIEW myReviews AS SELECT reviews.review_id, reviews.user_posted_id, reviews.review, reviews.val, reviews.year, reviews.month, reviews.day, things.thing_id, things.title, things.image_url FROM reviews INNER JOIN things ON reviews.thing_reviewed_id = things.thing_id; SELECT * FROM myReviews WHERE user_posted_id = (SELECT user_id FROM users WHERE username = $1);';
+
+    if (req.params.username == req.session.user.username) {
+        res.redirect('/profile');
+    } else {
+        db.any(query, req.params.username)
+        .then(function (data) {
+            res.render('pages/profile', {
+                username: req.params.username,
+                isSelf: false,
+                reviews: data
+            });
+        })
+        .catch(function (err) {
+            console.log(err);
+            res.redirect('/');
+        })
+    }
+    
 });
 
 app.post('/profile', async (req, res) => {
@@ -266,8 +347,12 @@ app.post('/profile', async (req, res) => {
 })
 
 app.post('/editReview', (req, res) => {
-    const query = 'UPDATE reviews SET review = $1, val = $2 WHERE review_id = $3';
-    db.any(query, [req.body.reviewInput, req.body.vote, req.body.SubmitID])
+    
+    let day=new Date().getDate()
+    let month=new Date().getMonth()+1
+    let year=new Date().getFullYear()
+    const query = 'UPDATE reviews SET review = $1, val = $2, day = $4, month = $5, year = $6 WHERE review_id = $3';
+    db.any(query, [req.body.reviewInput, req.body.vote, req.body.SubmitID, day, month, year])
         .then(function (data) {
             console.log("Successfully updated");
             res.redirect('/profile');
@@ -277,7 +362,24 @@ app.post('/editReview', (req, res) => {
             res.redirect('/');
         })
 });
-
+app.post('/search', (req, res) => {
+    const query = 'SELECT * FROM things WHERE UPPER(TITLE) LIKE UPPER($1);';
+    db.any(query, [req.body.searchThing]).then(data=>{
+        res.render('pages/search', {data:data});
+    });
+});
+app.get('/categories', (req, res) => {
+    const query = 'select * from things order by thing_id desc';
+    db.any(query).then(data => {
+        res.render('pages/categories', {data:data});
+    });
+});
+app.post('/categories', (req, res) => {
+    const query = 'select * from things where category = $1 order by thing_id desc';
+    db.any(query, [req.body.category]).then(data => {
+        res.render('pages/categories', {data:data});
+    });
+});
 app.get('/home', (req, res) => {
     const query = 'select * from things order by thing_id desc';
     db.any(query).then(data => {
