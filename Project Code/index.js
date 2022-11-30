@@ -114,7 +114,7 @@ app.get("/logout", (req, res) => {
 // GET /Item
 app.get('/item/:thing_id', (req, res) => {
   const thingId = parseInt(req.params.thing_id);
-  const query = "DROP VIEW IF EXISTS myReviews; CREATE VIEW myReviews AS SELECT reviews.review_id, reviews.user_posted_id, reviews.review, reviews.val, reviews.year, reviews.month, reviews.day, things.thing_id, things.title, things.description, things.category, things.upvotes, things.downvotes, things.image_url FROM reviews INNER JOIN things ON reviews.thing_reviewed_id = things.thing_id; SELECT * FROM myReviews WHERE thing_id = $1;"
+  const query = "DROP VIEW IF EXISTS myReviews; CREATE VIEW myReviews AS SELECT reviews.review_id, reviews.user_posted_id, reviews.review, reviews.val, reviews.year, reviews.month, reviews.day, things.thing_id, things.title, things.description, things.category, things.upvotes, things.downvotes, things.image_url FROM reviews RIGHT JOIN things ON reviews.thing_reviewed_id = things.thing_id; SELECT * FROM myReviews WHERE thing_id = $1;"
   var reviews = []; 
   db.any(query, [thingId])
       .then(function (data) {
