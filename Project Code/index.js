@@ -133,7 +133,8 @@ app.get('/item/:thing_id', (req, res) => {
           console.log(reviews);
           res.render('pages/Items', {
             thingData: data,
-            reviews: reviews
+            reviews: reviews,
+            thingid : thingId
           });
       })
       .catch(function (err) {
@@ -142,15 +143,16 @@ app.get('/item/:thing_id', (req, res) => {
       })
 });
 
-app.post('/addReview', (req, res) => {
+app.post('/addReview/:thingid', (req, res) => {
     req.session.user;
+    const thingid = parseInt(req.params.thingid)
     let day=new Date().getDate()
     let month=new Date().getMonth()+1
     let year=new Date().getFullYear()
     const query = 'INSERT INTO reviews (user_posted_id, thing_reviewed_id, year, month, day, review, val) values ($1, $2, $3, $4, $5, $6, $7);';
     db.any(query, [
         req.session.user.user_id,
-        1,
+        thingid,
         year,
         month,
         day,
