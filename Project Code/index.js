@@ -114,10 +114,11 @@ app.get("/logout", (req, res) => {
 // GET /Item
 app.get('/item/:thing_id', (req, res) => {
   const thingId = parseInt(req.params.thing_id);
-  const query = "DROP VIEW IF EXISTS myReviews; CREATE VIEW myReviews AS SELECT reviews.review_id, reviews.user_posted_id, reviews.review, reviews.val, reviews.year, reviews.month, reviews.day, things.thing_id, things.title, things.description, things.category, things.upvotes, things.downvotes, things.image_url FROM reviews RIGHT JOIN things ON reviews.thing_reviewed_id = things.thing_id; SELECT * FROM myReviews WHERE thing_id = $1;"
+  const query = "DROP VIEW IF EXISTS myReviews; CREATE VIEW myReviews AS SELECT reviews.review_id, reviews.user_posted_id, reviews.review, reviews.val, reviews.year, reviews.month, reviews.day, things.thing_id, things.title, things.description, things.category, things.upvotes, things.total_votes, things.image_url, things.username, things.day as thingDay, things.month as thingMonth, things.year as thingYear FROM reviews RIGHT JOIN things ON reviews.thing_reviewed_id = things.thing_id; SELECT * FROM myReviews WHERE thing_id = $1;"
   var reviews = []; 
   db.any(query, [thingId])
       .then(function (data) {
+        console.log(data[0]);
           data.forEach(function (thing) {
             const reviewConst = {
               review_id: thing.review_id,
@@ -149,7 +150,17 @@ app.post('/addReview/:thingid', (req, res) => {
     let day=new Date().getDate()
     let month=new Date().getMonth()+1
     let year=new Date().getFullYear()
-    const query = 'INSERT INTO reviews (user_posted_id, thing_reviewed_id, year, month, day, review, val) values ($1, $2, $3, $4, $5, $6, $7);';
+    var up;
+    var down;
+    if(req.body.val == "1") {
+        console.log("g");
+        up = 1;
+        down = 0;
+    } else {
+        up = 0;
+        down = 1;
+    }
+    const query = 'UPDATE things SET upvotes = upvotes + $8, downvotes = downvotes + $9, total_votes = total_votes + $8 + $9 WHERE thing_id = $2; INSERT INTO reviews (user_posted_id, thing_reviewed_id, year, month, day, review, val) values ($1, $2, $3, $4, $5, $6, $7);';
     db.any(query, [
         req.session.user.user_id,
         thingid,
@@ -157,7 +168,9 @@ app.post('/addReview/:thingid', (req, res) => {
         month,
         day,
         req.body.review,
-        req.body.val
+        req.body.val,
+        up,
+        down
         ])
         .then(function (data) {
             console.log("Successfully added review");
@@ -197,6 +210,9 @@ app.post('/register', async (req, res) => {
                 hash
             ])
             .then(function (data) {
+                
+                console.log(data);
+                console.log(hash);
                 console.log("successfully registered");
                 res.redirect('/');
             })
@@ -215,7 +231,7 @@ app.post('/posting', (req, res) => {
     let day=new Date().getDate()
     let month=new Date().getMonth()+1
     let year=new Date().getFullYear()
-    const query = 'insert into things (user_posted_id, title, description, year, month, day, image_url, upvotes, downvotes, total_votes, category)values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)';
+    const query = 'insert into things (user_posted_id, title, description, year, month, day, image_url, upvotes, downvotes, total_votes, category, username)values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)';
     db.any(query, [
         req.session.user.user_id,
         req.body.title,
@@ -227,7 +243,8 @@ app.post('/posting', (req, res) => {
         0,
         0,
         0,
-        req.body.category
+        req.body.category,
+        req.session.user.username
     ])
     .then(function (data) {
         res.redirect('home');
@@ -351,8 +368,18 @@ app.post('/editReview', (req, res) => {
     let day=new Date().getDate()
     let month=new Date().getMonth()+1
     let year=new Date().getFullYear()
-    const query = 'UPDATE reviews SET review = $1, val = $2, day = $4, month = $5, year = $6 WHERE review_id = $3';
-    db.any(query, [req.body.reviewInput, req.body.vote, req.body.SubmitID, day, month, year])
+    
+    var up;
+    var down;
+    if(req.body.vote == "1") {
+        up = 1;
+        down = -1;
+    } else {
+        up = -1;
+        down = 1;
+    }
+    const query = 'UPDATE reviews SET review = $1, val = $2, day = $4, month = $5, year = $6 WHERE review_id = $3; UPDATE things SET upvotes = upvotes + $7, downvotes = downvotes + $8 WHERE thing_id = (SELECT thing_reviewed_id FROM reviews WHERE review_id = $3)';
+    db.any(query, [req.body.reviewInput, req.body.vote, req.body.SubmitID, day, month, year, up, down])
         .then(function (data) {
             console.log("Successfully updated");
             res.redirect('/profile');

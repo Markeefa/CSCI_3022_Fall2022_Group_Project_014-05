@@ -5,43 +5,96 @@
   <div class="container">
     
     <%- include('../partials/addReview.ejs'); %>
-    <div class="text-center">
-    <h1><%= thingData[0].title%></h1>
-    <img src="<%= thingData[0].image_url %>" width="200px" height="200px">
-  </div>
+    <div class="card mb-1">
+      <div class="text-center">
+        <div class="row mt-3 mb-3">
+          <div class="col-md-4">
+            <img src="<%= thingData[0].image_url %>" style="max-height: 400px; max-width: 400px" class="img-fluid rounded-start">
+          </div>
+          <div class="col-md-5">
+            <div class="card-body">
+              <h1 class="card-title"><%= thingData[0].title%></h1>
+              <p class="card-text"><%= thingData[0].description %></p>
+              <p class="card-text">
+                <small class="text-muted">Posted on <%= thingData[0].thingmonth %>/<%= thingData[0].thingday%>/<%=thingData[0].thingyear%></small>
+              </p>
+              <p class="card-text">
+                By: 
+                <a href="/profile/<%= thingData[0].username %>" class="btn btn-secondary"><%= thingData[0].username %></a>
+              </p>
+                <a data-bs-toggle="modal" onclick="add_modal( '<%= thingData[0].title %>', ' ', '<%= thingData[0].thing_id %>')" data-bs-target="#addreviewModal" style="color:white;" class="btn btn-primary mt-3 mb-3">Create Review</a>
+              
+                <% if(thingData[0].total_votes==0) { %>
+                  <h4>0% Upvoted</h4>
+              <% }else{ %>
+              <h4><%= Math.round(100*(thingData[0].upvotes/(thingData[0].total_votes))) %>% Upvoted</h4>
+              <% } %>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   
-    <table class="table">
+        
+        <% if (reviews) { 
+          if (reviews[0].review_id != null) { %>
+          
+    <table class="table" style="width:100%">
+      <col style="width:10%">
+      <col style="width:30%">
+      <col style="width:60%">
       <thead>
         <tr>
-          <th>Review Id</th>
-          <th>Date Created</th>
+          <th>Date Created/Updated</th>
+          <th>Vote</th>
           <th>Review</th>
           <th></th>
         </tr>
       </thead>
       
       <tbody> 
-        
-        <% if (reviews) { %>
-          <% reviews.forEach(function(review){ %>
+          
+          <% var upvote = "https://cdn-icons-png.flaticon.com/512/25/25297.png";
+          var downvote = "https://cdn-icons-png.flaticon.com/512/1633/1633636.png";
+          var vote = ""; %>
+          <% reviews.forEach(function(review){ 
+            vote = downvote;
+            vote = downvote;
+              if (review.val == 1) {
+                  vote = upvote;
+              }
+            %>
             <tr>
-              <td><%=review.review_id%></td>
-              <td><%= review.year %></td>
-              <td><%= review.review %></td>
+              <td><%=review.month%>/<%=review.day%>/<%=review.year%></td>
+              <td>
+                <img class="img-fluid rounded-start" src ="<%= vote %>" width="80" height="80">
+                </td>
+              <td>
+                <%= review.review %></td>
             </tr>
             
             <% }); %>
             
-            <% } %>
-            
           </tbody>
           
         </table>
+            <%  } else {
+              %>
+              
+      <div class="text-center">
+              <h1>No reviews yet.</h1>
+      </div>
+            <% }  
+            } else {
+              %>
+      <div class="text-center">
+              <h1>No reviews yet.</h1>
+      </div>
+            <% } %>
+            
         
       </div>
       
-      <div class="text-center">
-        <a data-bs-toggle="modal" onclick="add_modal( '<%= thingData[0].title %>', ' ', '<%= thingData[0].thing_id %>')" data-bs-target="#addreviewModal" class="btn btn-primary mt-5">Create Review</a>
-      </div>
+      
     </main>
     <%- include ('../partials/footer') %>
