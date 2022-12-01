@@ -14,12 +14,12 @@
     <h1>Trending Posts</h1>
     <table>
     <% for(var i = 0; i < data.length; i++) { %>
-        <% if(i%5==0){ %>
+        <% if(i%4==0){ %>
             <tr>
         <% } %>
         <td>
         <div class="card">
-            <img src="<%=data[i].image_url%>" style="width:100%">
+            <img src="<%=data[i].image_url%>" style="width:250px; height:250px;">
             <div class="container">
                 <table>
                 <tr>
@@ -30,7 +30,7 @@
                         <% if(data[i].upvotes+data[i].downvotes==0) { %>
                             <h4>0% Upvoted</h4>
                         <% }else{ %>
-                        <h4><%= 100*(data[i].upvotes/(data[i].upvotes+data[i].downvotes)) %>% Upvoted</h4>
+                        <h4><%= Math.round(100*(data[i].upvotes/(data[i].upvotes+data[i].downvotes))) %>% Upvoted</h4>
                         <% } %>
                         <h4><%= data[i].total_votes %> Total</h4>
                     </td>
@@ -44,7 +44,7 @@
             </div>
         </div>
         </td>
-        <% if((i-4)%5==0){ %>
+        <% if((i-3)%4==0){ %>
             </tr>
         <% } %>
     <% } %>
